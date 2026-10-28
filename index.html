@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>درس لغة HTML التفاعلي | مدرسة أبو الدرداء</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Tajawal & Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#035485',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        accent: {
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        tajawal: ['Tajawal', 'sans-serif'],
+                        code: ['Courier New', 'Courier', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0284c7;
+            border-radius: 4px;
+        }
+
+        /* Certificate Print styling */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-certificate, #printable-certificate * {
+                visibility: visible;
+            }
+            #printable-certificate {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 20px;
+                background: white !important;
+                color: black !important;
+                box-shadow: none !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        /* Glassmorphism Card */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-card-light {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Active Tab Effect */
+        .tab-btn.active {
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4);
+            border-bottom: 3px solid #f59e0b;
+        }
+
+        /* Code highlight line */
+        .code-keyword { color: #f472b6; }
+        .code-tag { color: #38bdf8; }
+        .code-attr { color: #fbbf24; }
+        .code-val { color: #4ade80; }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(2, 132, 199, 0.3); }
+            50% { box-shadow: 0 0 25px rgba(2, 132, 199, 0.7); }
+        }
+
+        .glow-effect {
+            animation: pulse-glow 3s infinite;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-slate-100 selection:bg-brand-500 selection:text-white">
+
+    <!-- Canvas for Confetti effects -->
+    <canvas id="confetti-canvas" class="fixed inset-0 pointer-events-none z-50"></canvas>
+
+    <!-- Welcome Modal / Student Login -->
+    <div id="login-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl p-6 sm:p-10 max-w-lg w-full text-center border-2 border-brand-500/30 shadow-2xl relative overflow-hidden">
+            <!-- Decorative Background Element -->
+            <div class="absolute -top-12 -right-12 w-40 h-40 bg-brand-500/20 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute -bottom-12 -left-12 w-40 h-40 bg-amber-500/20 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div class="w-20 h-20 bg-brand-600/30 border-2 border-brand-500 rounded-2xl flex items-center justify-center mx-auto mb-4 text-brand-400 text-3xl shadow-lg">
+                <i class="fa-solid fa-code-call"></i>
+            </div>
+
+            <h1 class="text-2xl sm:text-3xl font-black mb-2 text-white font-tajawal">مرحباً بك في رحلة تعلم <span class="text-brand-400">HTML</span></h1>
+            <p class="text-slate-300 text-sm mb-6">الوسوم الأساسية لصفحات الويب - الصف العاشر</p>
+
+            <!-- School Info Badges -->
+            <div class="bg-slate-900/60 rounded-xl p-3 border border-slate-700/50 mb-6 text-xs text-slate-300 space-y-1">
+                <div class="flex items-center justify-center gap-2 font-bold text-amber-400">
+                    <i class="fa-solid fa-school"></i> <span>مدرسة أبو الدرداء</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-right pt-2 border-t border-slate-800">
+                    <div><span class="text-slate-400">إعداد المعلم:</span> <strong class="text-slate-200">أ. محمد الهنائي</strong></div>
+                    <div><span class="text-slate-400">مدير المدرسة:</span> <strong class="text-slate-200">أ. سلطان الوائلي</strong></div>
+                    <div class="col-span-2 text-center"><span class="text-slate-400">المشرف التربوي:</span> <strong class="text-slate-200">أ. محمد العزري</strong></div>
+                </div>
+            </div>
+
+            <form id="student-form" onsubmit="handleStartLearning(event)" class="space-y-4 text-right">
+                <div>
+                    <label class="block text-sm font-semibold mb-1 text-slate-300">اسم الطالب / الطالبة الثلاثي <span class="text-red-400">*</span></label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-user"></i>
+                        </span>
+                        <input type="text" id="student-name-input" required placeholder="أدخل اسمك الثلاثي هنا" 
+                            class="w-full pl-4 pr-10 py-3 bg-slate-900/80 border border-slate-700 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none text-white text-sm transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold mb-1 text-slate-300">الصف / الشعبة <span class="text-red-400">*</span></label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </span>
+                        <select id="student-class-input" required class="w-full pl-4 pr-10 py-3 bg-slate-900/80 border border-slate-700 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none text-white text-sm transition">
+                            <option value="">اختر الشعبة...</option>
+                            <option value="العاشر / 1">الصف العاشر - 1</option>
+                            <option value="العاشر / 2">الصف العاشر - 2</option>
+                            <option value="العاشر / 3">الصف العاشر - 3</option>
+                            <option value="العاشر / 4">الصف العاشر - 4</option>
+                            <option value="العاشر / 5">الصف العاشر - 5</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-3.5 px-6 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white font-bold rounded-xl shadow-lg hover:shadow-brand-500/25 transition transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 text-base">
+                    <span>انطلق للدرس والتحديات</span>
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                
+                <!-- Logo & School Info -->
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center text-white shadow-md font-black text-xl">
+                        &lt;/&gt;
+                    </div>
+                    <div>
+                        <h1 class="text-base sm:text-lg font-black text-white leading-tight font-tajawal">مُصمم الويب الصغير | HTML</h1>
+                        <p class="text-xs text-brand-400 font-medium">مدرسة أبو الدرداء - الصف العاشر</p>
+                    </div>
+                </div>
+
+                <!-- Teacher Metadata Bar -->
+                <div class="hidden lg:flex items-center gap-4 text-xs bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700/60 text-slate-300">
+                    <div><i class="fa-solid fa-chalkboard-user text-brand-400 ml-1"></i> المعلم: <span class="font-bold text-white">أ. محمد الهنائي</span></div>
+                    <span class="text-slate-600">|</span>
+                    <div><i class="fa-solid fa-user-check text-emerald-400 ml-1"></i> المشرف: <span class="font-bold text-white">أ. محمد العزري</span></div>
+                    <span class="text-slate-600">|</span>
+                    <div><i class="fa-solid fa-user-tie text-amber-400 ml-1"></i> المدير: <span class="font-bold text-white">أ. سلطان الوائلي</span></div>
+                </div>
+
+                <!-- Student Profile Header Badge & Score -->
+                <div class="flex items-center gap-3">
+                    <div class="bg-slate-800/90 border border-slate-700 rounded-xl px-3 py-1.5 flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center font-bold text-sm">
+                            <i class="fa-solid fa-user-graduate"></i>
+                        </div>
+                        <div class="text-right">
+                            <div id="header-student-name" class="text-xs font-bold text-white">طالب زائر</div>
+                            <div id="header-student-class" class="text-[10px] text-slate-400">الصف العاشر</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl px-3 py-1.5 flex items-center gap-2 text-amber-400">
+                        <i class="fa-solid fa-trophy text-sm"></i>
+                        <span id="total-score" class="font-black text-sm">0</span>
+                        <span class="text-[10px] text-amber-300/80">نقاط</span>
+                    </div>
+
+                    <button onclick="toggleAudioMute()" id="sound-btn" class="p-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-slate-300 transition text-sm" title="كتم / تشغيل الصوت">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Global Progress Bar -->
+        <div class="w-full bg-slate-800 h-1.5">
+            <div id="global-progress" class="bg-gradient-to-r from-brand-500 to-emerald-400 h-full w-0 transition-all duration-500"></div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="bg-slate-900 border-b border-slate-800/80 sticky top-[61px] z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex space-x-1 space-x-reverse overflow-x-auto py-2 no-scrollbar text-xs sm:text-sm font-semibold">
+                <button onclick="switchTab('lesson')" id="tab-lesson" class="tab-btn active px-4 py-2.5 rounded-xl flex items-center gap-2 whitespace-nowrap transition">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span>الشرح والمختبر البرمجي</span>
+                </button>
+                <button onclick="switchTab('matching')" id="tab-matching" class="tab-btn px-4 py-2.5 rounded-xl flex items-center gap-2 whitespace-nowrap transition text-slate-300 hover:bg-slate-800">
+                    <i class="fa-solid fa-puzzle-piece"></i>
+                    <span>لعبة مطابقة الوسوم</span>
+                </button>
+                <button onclick="switchTab('builder')" id="tab-builder" class="tab-btn px-4 py-2.5 rounded-xl flex items-center gap-2 whitespace-nowrap transition text-slate-300 hover:bg-slate-800">
+                    <i class="fa-solid fa-cubes"></i>
+                    <span>تحدي بناء الصفحة</span>
+                </button>
+                <button onclick="switchTab('quiz')" id="tab-quiz" class="tab-btn px-4 py-2.5 rounded-xl flex items-center gap-2 whitespace-nowrap transition text-slate-300 hover:bg-slate-800">
+                    <i class="fa-solid fa-crosshairs"></i>
+                    <span>اختبار صياد الأخطاء</span>
+                </button>
+                <button onclick="switchTab('certificate')" id="tab-certificate" class="tab-btn px-4 py-2.5 rounded-xl flex items-center gap-2 whitespace-nowrap transition text-slate-300 hover:bg-slate-800">
+                    <i class="fa-solid fa-award text-amber-400"></i>
+                    <span>شهادة التميز</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Containers -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- TAB 1: LESSON & LIVE SANDBOX -->
+        <section id="section-lesson" class="space-y-6">
+            
+            <!-- Hero Lesson Header -->
+            <div class="glass-card rounded-2xl p-6 border-r-4 border-r-brand-500 relative overflow-hidden">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+                    <div>
+                        <span class="inline-block px-3 py-1 bg-brand-500/20 text-brand-300 text-xs rounded-full font-bold mb-2">الوحدة التعليمية الثانية - الصف العاشر</span>
+                        <h2 class="text-2xl sm:text-3xl font-black text-white font-tajawal">الوسوم الأساسية لصفحات الويب (HTML Basic Tags)</h2>
+                        <p class="text-slate-300 text-sm mt-1">سنتعلم كيفية هيكلة الصفحة، إضافة العناوين، الفقرات، الخطوط الفاصلة، وإدراج الوسائط كالصور والصوت والفيديو.</p>
+                    </div>
+                    <div class="flex items-center gap-2 self-start md:self-auto">
+                        <button onclick="loadSampleCode('basic')" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-xs rounded-lg text-brand-300 font-semibold border border-slate-700 transition">
+                            <i class="fa-solid fa-code text-xs ml-1"></i> تحميل الهيكل الأساسي
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two Column Layout: Topics Nav & Sandbox -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Left/Main: Lessons & Theory Cards -->
+                <div class="lg:col-span-6 space-y-4">
+                    
+                    <!-- Accordion Topic 1: Structure -->
+                    <div class="glass-card rounded-2xl p-5 hover:border-brand-500/50 transition">
+                        <div class="flex items-center justify-between cursor-pointer" onclick="toggleTopic('topic-1')">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-xl bg-brand-500/20 text-brand-400 font-bold flex items-center justify-center text-sm">1</span>
+                                <h3 class="font-bold text-lg text-white">الهيكل الأساسي لصفحة HTML</h3>
+                            </div>
+                            <i id="topic-1-icon" class="fa-solid fa-chevron-down text-slate-400"></i>
+                        </div>
+                        <div id="topic-1" class="mt-4 pt-4 border-t border-slate-700/60 space-y-3 text-sm text-slate-300">
+                            <p>تتكون أي صفحة ويب من وسوم رئيسية تفتح بـ <code class="text-brand-300 bg-slate-900 px-1.5 py-0.5 rounded">&lt;tag&gt;</code> وتغلق بـ <code class="text-brand-300 bg-slate-900 px-1.5 py-0.5 rounded">&lt;/tag&gt;</code>:</p>
+                            <ul class="list-disc list-inside space-y-1.5 text-xs sm:text-sm bg-slate-950/50 p-3 rounded-xl border border-slate-800">
+                                <li><strong class="text-brand-300">&lt;html&gt;</strong>: الوسم الحاوي لكامل مستند الصفحة.</li>
+                                <li><strong class="text-brand-300">&lt;head&gt;</strong>: يحتوي معلومات الصفحة مثل العنوان والإعدادات.</li>
+                                <li><strong class="text-brand-300">&lt;title&gt;</strong>: يحدد اسم الصفحة الذي يظهر في تبويب المتصفح.</li>
+                                <li><strong class="text-brand-300">&lt;body&gt;</strong>: يحتوي على جميع المحتويات المرئية للمستخدم.</li>
+                            </ul>
+                            <button onclick="loadSampleCode('structure')" class="w-full py-2 bg-brand-600/30 hover:bg-brand-600/50 text-brand-300 rounded-lg text-xs font-bold transition border border-brand-500/30">
+                                <i class="fa-solid fa-play ml-1"></i> تجربة الكود في المحرر المباشر
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Accordion Topic 2: Headings & Paragraphs -->
+                    <div class="glass-card rounded-2xl p-5 hover:border-brand-500/50 transition">
+                        <div class="flex items-center justify-between cursor-pointer" onclick="toggleTopic('topic-2')">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-xl bg-brand-500/20 text-brand-400 font-bold flex items-center justify-center text-sm">2</span>
+                                <h3 class="font-bold text-lg text-white">العناوين والفقرات (Headings & Paragraphs)</h3>
+                            </div>
+                            <i id="topic-2-icon" class="fa-solid fa-chevron-down text-slate-400"></i>
+                        </div>
+                        <div id="topic-2" class="mt-4 pt-4 border-t border-slate-700/60 space-y-3 text-sm text-slate-300">
+                            <p>تستخدم العناوين لتنظيم محتوى الصفحة متدرجة من الأكبر حجماً إلى الأصغر:</p>
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div class="bg-slate-950/60 p-2.5 rounded-lg border border-slate-800">
+                                    <code class="text-amber-400 font-bold">&lt;h1&gt;</code> إلى <code class="text-amber-400 font-bold">&lt;h6&gt;</code>
+                                    <p class="text-slate-400 mt-1">تستخدم لكتابة العناوين الرئيسية والفرعية.</p>
+                                </div>
+                                <div class="bg-slate-950/60 p-2.5 rounded-lg border border-slate-800">
+                                    <code class="text-amber-400 font-bold">&lt;p&gt;</code> (Paragraph)
+                                    <p class="text-slate-400 mt-1">لكتابة الفقرات النصية العادية.</p>
+                                </div>
+                            </div>
+                            <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 space-y-2">
+                                <span class="text-xs font-bold text-emerald-400">وسوم التنظيم والتنسيق:</span>
+                                <p class="text-xs"><code class="text-brand-300">&lt;br&gt;</code> : النزول لسطر جديد (وسم مفرد لا يحتاج وسم إغلاق).</p>
+                                <p class="text-xs"><code class="text-brand-300">&lt;hr&gt;</code> : رسم خط فاصل أفقي (وسم مفرد).</p>
+                            </div>
+                            <button onclick="loadSampleCode('headings')" class="w-full py-2 bg-brand-600/30 hover:bg-brand-600/50 text-brand-300 rounded-lg text-xs font-bold transition border border-brand-500/30">
+                                <i class="fa-solid fa-play ml-1"></i> تجربة العناوين والفقرات
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Accordion Topic 3: Images -->
+                    <div class="glass-card rounded-2xl p-5 hover:border-brand-500/50 transition">
+                        <div class="flex items-center justify-between cursor-pointer" onclick="toggleTopic('topic-3')">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-xl bg-brand-500/20 text-brand-400 font-bold flex items-center justify-center text-sm">3</span>
+                                <h3 class="font-bold text-lg text-white">إدراج الصور (&lt;img&gt;)</h3>
+                            </div>
+                            <i id="topic-3-icon" class="fa-solid fa-chevron-down text-slate-400"></i>
+                        </div>
+                        <div id="topic-3" class="mt-4 pt-4 border-t border-slate-700/60 space-y-3 text-sm text-slate-300">
+                            <p>يستخدم الوسم <code class="text-brand-300 bg-slate-900 px-1 rounded">&lt;img&gt;</code> لإدراج الصور في الصفحة، وهو وسم أحادي ذاتي الإغلاق، ويعتمد على الخاصيات التالية:</p>
+                            <ul class="list-disc list-inside space-y-1 text-xs sm:text-sm bg-slate-950/50 p-3 rounded-xl border border-slate-800">
+                                <li><code class="text-amber-400">src</code>: يحدد مسار أو رابط الصورة.</li>
+                                <li><code class="text-amber-400">alt</code>: النص البديل الذي يظهر عند تعذر تحميل الصورة.</li>
+                                <li><code class="text-amber-400">width</code> / <code class="text-amber-400">height</code>: لتحديد عرض وارتفاع الصورة.</li>
+                            </ul>
+                            <button onclick="loadSampleCode('images')" class="w-full py-2 bg-brand-600/30 hover:bg-brand-600/50 text-brand-300 rounded-lg text-xs font-bold transition border border-brand-500/30">
+                                <i class="fa-solid fa-play ml-1"></i> تجربة إدراج صورة
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Accordion Topic 4: Audio & Video -->
+                    <div class="glass-card rounded-2xl p-5 hover:border-brand-500/50 transition">
+                        <div class="flex items-center justify-between cursor-pointer" onclick="toggleTopic('topic-4')">
+                            <div class="flex items-center gap-3">
+                                <span class="w-8 h-8 rounded-xl bg-brand-500/20 text-brand-400 font-bold flex items-center justify-center text-sm">4</span>
+                                <h3 class="font-bold text-lg text-white">إدراج الصوت والفيديو (&lt;audio&gt; &amp; &lt;video&gt;)</h3>
+                            </div>
+                            <i id="topic-4-icon" class="fa-solid fa-chevron-down text-slate-400"></i>
+                        </div>
+                        <div id="topic-4" class="mt-4 pt-4 border-t border-slate-700/60 space-y-3 text-sm text-slate-300">
+                            <p>أضافت HTML5 وسوم الوسائط المتعددة بشكل مباشر دون الحاجة لإضافات خارجية:</p>
+                            <div class="space-y-2 text-xs">
+                                <div class="bg-slate-950/60 p-3 rounded-lg border border-slate-800">
+                                    <span class="font-bold text-brand-300 block mb-1">&lt;audio controls src="audio.mp3"&gt;&lt;/audio&gt;</span>
+                                    <p class="text-slate-400">إدراج مشغل صوتي. خاصية <code class="text-amber-400">controls</code> ضرورية لإظهار أزرار التشغيل والتحكم بالحجم.</p>
+                                </div>
+                                <div class="bg-slate-950/60 p-3 rounded-lg border border-slate-800">
+                                    <span class="font-bold text-brand-300 block mb-1">&lt;video controls width="300" src="video.mp4"&gt;&lt;/video&gt;</span>
+                                    <p class="text-slate-400">إدراج مشغل فيديو مع إمكانية التحكم بالعرض والارتفاع ولوحة التحكم.</p>
+                                </div>
+                            </div>
+                            <button onclick="loadSampleCode('media')" class="w-full py-2 bg-brand-600/30 hover:bg-brand-600/50 text-brand-300 rounded-lg text-xs font-bold transition border border-brand-500/30">
+                                <i class="fa-solid fa-play ml-1"></i> تجربة وسوم الصوت والفيديو
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Side: Interactive Code Playground / Sandbox -->
+                <div class="lg:col-span-6 flex flex-col h-[650px] glass-card rounded-2xl overflow-hidden border border-slate-700 shadow-2xl">
+                    
+                    <!-- Sandbox Header Bar -->
+                    <div class="bg-slate-900 px-4 py-3 border-b border-slate-800 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span>
+                            <span class="w-3 h-3 rounded-full bg-yellow-500 inline-block"></span>
+                            <span class="w-3 h-3 rounded-full bg-green-500 inline-block"></span>
+                            <span class="text-xs text-slate-400 font-mono mr-2">HTML Code Live Editor</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="runCode()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition flex items-center gap-1 shadow">
+                                <i class="fa-solid fa-play text-[10px]"></i>
+                                <span>تحديث المعاينة</span>
+                            </button>
+                            <button onclick="resetEditor()" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-lg transition" title="إعادة ضبط">
+                                <i class="fa-solid fa-rotate-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Code Textarea -->
+                    <div class="flex-1 relative bg-slate-950 font-code">
+                        <textarea id="code-input" spellcheck="false" class="w-full h-full bg-transparent text-emerald-400 p-4 text-xs sm:text-sm font-mono leading-relaxed outline-none resize-none focus:ring-0 border-none" placeholder="اكتب كود HTML هنا..."></textarea>
+                    </div>
+
+                    <!-- Sandbox Output Divider -->
+                    <div class="bg-slate-800 px-4 py-2 text-xs font-bold text-slate-300 flex items-center justify-between border-t border-b border-slate-700">
+                        <span class="flex items-center gap-2">
+                            <i class="fa-solid fa-desktop text-brand-400"></i>
+                            <span>شاشة المعاينة المباشرة (Live Output)</span>
+                        </span>
+                        <span class="text-[10px] text-slate-400">تُحدث تلقائياً</span>
+                    </div>
+
+                    <!-- Live Output Frame -->
+                    <div class="flex-1 bg-white relative">
+                        <iframe id="code-preview" class="w-full h-full border-0"></iframe>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 2: TAG MATCHING GAME -->
+        <section id="section-matching" class="hidden space-y-6">
+            <div class="glass-card rounded-2xl p-6 text-center max-w-4xl mx-auto">
+                <span class="px-3 py-1 bg-amber-500/20 text-amber-300 text-xs rounded-full font-bold">اللعبة الأولــى</span>
+                <h2 class="text-2xl font-black text-white mt-2 font-tajawal">طابق وسوم الـ HTML بوظيفتها الصحيحة</h2>
+                <p class="text-slate-300 text-sm mt-1">اضغط على الوسم في العمود الأول، ثم اضغط على الوظيفة المناسبة له في العمود الثاني.</p>
+                
+                <div class="mt-4 flex items-center justify-center gap-6 text-sm font-bold">
+                    <div class="bg-slate-800 px-4 py-2 rounded-xl text-slate-300 border border-slate-700">
+                        المحاولات الناجحة: <span id="match-score" class="text-emerald-400">0</span> / 6
+                    </div>
+                    <button onclick="initMatchingGame()" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl transition text-xs flex items-center gap-1.5">
+                        <i class="fa-solid fa-rotate"></i> إعادة اللعبة
+                    </button>
+                </div>
+            </div>
+
+            <!-- Matching Game Arena -->
+            <div id="matching-arena" class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Tags Column -->
+                <div class="space-y-3">
+                    <h3 class="text-center text-sm font-bold text-brand-300 mb-2">وسوم الـ HTML</h3>
+                    <div id="tags-column" class="space-y-3"></div>
+                </div>
+
+                <!-- Descriptions Column -->
+                <div class="space-y-3">
+                    <h3 class="text-center text-sm font-bold text-amber-300 mb-2">الوصف والوظيفة</h3>
+                    <div id="descs-column" class="space-y-3"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: CODE BUILDER CHALLENGE -->
+        <section id="section-builder" class="hidden space-y-6">
+            <div class="glass-card rounded-2xl p-6 text-center max-w-4xl mx-auto">
+                <span class="px-3 py-1 bg-emerald-500/20 text-emerald-300 text-xs rounded-full font-bold">اللعبة الثانية</span>
+                <h2 class="text-2xl font-black text-white mt-2 font-tajawal">تحدي بناء كود الصفحة المفقود</h2>
+                <p class="text-slate-300 text-sm mt-1">قم بسحب وإفلات الوسوم المفقودة إلى أماكنها الصحيحة لبناء صفحة الويب بنجاح!</p>
+            </div>
+
+            <div class="max-w-4xl mx-auto glass-card rounded-2xl p-6 border border-slate-700 space-y-6">
+                <!-- Draggable Tags Reservoir -->
+                <div>
+                    <h4 class="text-xs font-bold text-slate-400 mb-3">الوسوم المتاحة (اسحب أو اضغط للوضع):</h4>
+                    <div id="tags-pool" class="flex flex-wrap gap-3 p-4 bg-slate-950/80 rounded-xl border border-slate-800 min-h-[60px] items-center">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Code Target Template -->
+                <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 font-mono text-sm leading-relaxed space-y-3 text-slate-300">
+                    <div>&lt;!DOCTYPE html&gt;</div>
+                    <div>&lt;html&gt;</div>
+                    <div class="pr-4 border-r-2 border-brand-500/40 space-y-2">
+                        <div>&lt;head&gt;</div>
+                        <div class="pr-4 flex items-center gap-2">
+                            <span>&lt;title&gt;مدرستي الجميلة&lt;/title&gt;</span>
+                        </div>
+                        <div>&lt;/head&gt;</div>
+                        <div>&lt;body&gt;</div>
+                        <div class="pr-4 space-y-3">
+                            
+                            <!-- Slot 1 -->
+                            <div class="flex items-center gap-2 bg-slate-900/60 p-2 rounded-lg border border-slate-800">
+                                <span class="text-slate-500 text-xs">// 1. وسم عنوان رئيسي لكتابة اسم المدرسة</span>
+                                <div id="slot-1" onclick="handleSlotClick(1)" class="drop-slot w-36 h-9 border-2 border-dashed border-brand-500/50 rounded-lg flex items-center justify-center text-xs font-bold text-brand-300 bg-brand-500/10 cursor-pointer hover:bg-brand-500/20 transition">
+                                    [ اسقط الوسم هنا ]
+                                </div>
+                                <span class="text-white">مدرسة أبو الدرداء&lt;/h1&gt;</span>
+                            </div>
+
+                            <!-- Slot 2 -->
+                            <div class="flex items-center gap-2 bg-slate-900/60 p-2 rounded-lg border border-slate-800">
+                                <span class="text-slate-500 text-xs">// 2. وسم رسم خط فاصل</span>
+                                <div id="slot-2" onclick="handleSlotClick(2)" class="drop-slot w-36 h-9 border-2 border-dashed border-brand-500/50 rounded-lg flex items-center justify-center text-xs font-bold text-brand-300 bg-brand-500/10 cursor-pointer hover:bg-brand-500/20 transition">
+                                    [ اسقط الوسم هنا ]
+                                </div>
+                            </div>
+
+                            <!-- Slot 3 -->
+                            <div class="flex items-center gap-2 bg-slate-900/60 p-2 rounded-lg border border-slate-800">
+                                <span class="text-slate-500 text-xs">// 3. وسم بداية فقرة نصية</span>
+                                <div id="slot-3" onclick="handleSlotClick(3)" class="drop-slot w-36 h-9 border-2 border-dashed border-brand-500/50 rounded-lg flex items-center justify-center text-xs font-bold text-brand-300 bg-brand-500/10 cursor-pointer hover:bg-brand-500/20 transition">
+                                    [ اسقط الوسم هنا ]
+                                </div>
+                                <span class="text-white">أهلاً بكم في صفحتنا التعليمية</span>
+                                <div id="slot-4" onclick="handleSlotClick(4)" class="drop-slot w-36 h-9 border-2 border-dashed border-brand-500/50 rounded-lg flex items-center justify-center text-xs font-bold text-brand-300 bg-brand-500/10 cursor-pointer hover:bg-brand-500/20 transition">
+                                    [ وسم الإغلاق ]
+                                </div>
+                            </div>
+
+                            <!-- Slot 5 -->
+                            <div class="flex items-center gap-2 bg-slate-900/60 p-2 rounded-lg border border-slate-800">
+                                <span class="text-slate-500 text-xs">// 4. وسم إدراج صورة مع خاصية المصدر</span>
+                                <div id="slot-5" onclick="handleSlotClick(5)" class="drop-slot w-48 h-9 border-2 border-dashed border-brand-500/50 rounded-lg flex items-center justify-center text-xs font-bold text-brand-300 bg-brand-500/10 cursor-pointer hover:bg-brand-500/20 transition">
+                                    [ اسقط الوسم هنا ]
+                                </div>
+                            </div>
+
+                        </div>
+                        <div>&lt;/body&gt;</div>
+                    </div>
+                    <div>&lt;/html&gt;</div>
+                </div>
+
+                <!-- Verify Button -->
+                <div class="flex items-center justify-between">
+                    <button onclick="resetBuilderGame()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition">
+                        إعادة التحدي
+                    </button>
+                    <button onclick="verifyBuilderSolution()" class="px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white rounded-xl text-sm font-bold shadow-lg shadow-emerald-600/30 transition transform hover:-translate-y-0.5">
+                        <i class="fa-solid fa-circle-check ml-1"></i> التحقق من صحة الكود
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: BUG HUNTER QUIZ -->
+        <section id="section-quiz" class="hidden space-y-6">
+            <div class="glass-card rounded-2xl p-6 text-center max-w-3xl mx-auto">
+                <span class="px-3 py-1 bg-red-500/20 text-red-300 text-xs rounded-full font-bold">اللعبة الثالثة</span>
+                <h2 class="text-2xl font-black text-white mt-2 font-tajawal">اختبار صياد الأخطاء البرمجية</h2>
+                <p class="text-slate-300 text-sm mt-1">اختبر حصيلتك المعرفية في وسوم الـ HTML وأصلح الأخطاء لاكتساب أعلى النقاط!</p>
+            </div>
+
+            <div class="max-w-3xl mx-auto glass-card rounded-2xl p-6 border border-slate-700 relative">
+                
+                <!-- Quiz Progress Bar -->
+                <div class="flex items-center justify-between text-xs text-slate-400 mb-4">
+                    <span>السؤال <strong id="quiz-current-step" class="text-brand-400">1</strong> من <strong id="quiz-total-steps">6</strong></span>
+                    <span id="quiz-timer" class="text-amber-400 font-bold"><i class="fa-regular fa-clock ml-1"></i> 00:00</span>
+                </div>
+
+                <div id="quiz-container">
+                    <!-- Question & Answers Rendered by JS -->
+                </div>
+
+                <!-- Quiz Navigation -->
+                <div class="mt-6 pt-4 border-t border-slate-800 flex justify-between items-center">
+                    <button id="quiz-prev-btn" onclick="prevQuestion()" disabled class="px-4 py-2 bg-slate-800 text-slate-500 rounded-xl text-xs font-bold transition disabled:opacity-40">
+                        السؤال السابق
+                    </button>
+                    <button id="quiz-next-btn" onclick="nextQuestion()" class="px-6 py-2.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold transition shadow-md">
+                        التالي <i class="fa-solid fa-arrow-left mr-1"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: CERTIFICATE -->
+        <section id="section-certificate" class="hidden space-y-6">
+            <div class="glass-card rounded-2xl p-6 text-center max-w-4xl mx-auto no-print">
+                <i class="fa-solid fa-award text-amber-400 text-4xl mb-2"></i>
+                <h2 class="text-2xl font-black text-white font-tajawal">شهادة الإنجاز والتفوق</h2>
+                <p class="text-slate-300 text-sm mt-1">تمنح هذه الشهادة رسمياً للطلبة الذين أتموا التطبيقات والأنشطة التفاعلية بنجاح.</p>
+                <div class="mt-4 flex items-center justify-center gap-3">
+                    <button onclick="window.print()" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs transition shadow-lg flex items-center gap-2">
+                        <i class="fa-solid fa-print"></i>
+                        <span>طباعة الشهادة / حفظ PDF</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Printable Certificate Body -->
+            <div id="printable-certificate" class="max-w-4xl mx-auto bg-gradient-to-br from-amber-50/10 via-slate-900 to-slate-950 p-3 sm:p-8 rounded-3xl border-8 border-amber-500/40 relative overflow-hidden shadow-2xl text-slate-100">
+                
+                <!-- Inner Border Frame -->
+                <div class="border-2 border-amber-400/60 rounded-2xl p-6 sm:p-10 relative z-10 text-center space-y-6 bg-slate-950/80 backdrop-blur-md">
+                    
+                    <!-- Certificate Header -->
+                    <div class="flex items-center justify-between border-b border-amber-500/30 pb-4">
+                        <div class="text-right text-xs text-slate-300 space-y-0.5">
+                            <p class="font-bold text-amber-400">سلطنة عمان</p>
+                            <p>وزارة التربية والتعليم</p>
+                            <p class="font-bold text-white">مدرسة أبو الدرداء للتعليم الأساسي</p>
+                        </div>
+                        <div class="w-16 h-16 rounded-full bg-amber-500/10 border-2 border-amber-400 flex items-center justify-center text-amber-400 text-2xl shadow-inner">
+                            <i class="fa-solid fa-award"></i>
+                        </div>
+                        <div class="text-left text-xs text-slate-300 space-y-0.5">
+                            <p class="font-bold text-amber-400">قسم المهارات الرقمية</p>
+                            <p>لغة برمجة الويب HTML</p>
+                            <p id="cert-date" class="text-slate-400">التاريخ: 2026/10/28</p>
+                        </div>
+                    </div>
+
+                    <!-- Main Title -->
+                    <div>
+                        <h1 class="text-2xl sm:text-4xl font-black text-amber-400 font-tajawal tracking-wide">شهادة تقدير وإنجاز تفاعلي</h1>
+                        <p class="text-xs text-slate-400 mt-1">تؤكد مدرسة أبو الدرداء بأن الطالب/ـة المذكور أدناه قد اجتاز بنجاح درس الوسوم الأساسية بلغة HTML</p>
+                    </div>
+
+                    <!-- Student Name Banner -->
+                    <div class="py-4 my-2 border-y-2 border-amber-500/20 bg-amber-500/5 rounded-xl">
+                        <p class="text-xs text-slate-400 mb-1">يشهد معلم المادة بأن الطالب/ـة:</p>
+                        <h2 id="cert-student-name" class="text-2xl sm:text-3xl font-black text-white font-tajawal text-brand-300">اسم الطالب الثلاثي</h2>
+                        <p class="text-xs text-amber-400 mt-1">الصف/الشعبة: <span id="cert-student-class" class="text-white font-bold">الصف العاشر</span></p>
+                    </div>
+
+                    <!-- Achievement Summary -->
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl mx-auto">
+                        قد أتم بنجاح الشرح التفاعلي والمختبر البرمجي وحصل على درجة <span id="cert-score" class="text-amber-400 font-bold text-base">100%</span> في التحديات والألعاب التعليمية للوسوم الأساسية (العناوين، الفقرات، الخط الفاصل، الصور، الصوت، والفيديو).
+                    </p>
+
+                    <!-- Signatures Grid -->
+                    <div class="grid grid-cols-3 gap-2 pt-6 border-t border-slate-800 text-xs">
+                        <div class="space-y-1">
+                            <p class="text-slate-400 text-[10px]">معلم المادة</p>
+                            <p class="font-bold text-slate-200">أ. محمد الهنائي</p>
+                            <div class="h-8 flex items-center justify-center font-serif text-amber-400/60 italic text-sm">M. AlHinai</div>
+                        </div>
+                        <div class="space-y-1">
+                            <p class="text-slate-400 text-[10px]">مشرف المادة</p>
+                            <p class="font-bold text-slate-200">أ. محمد العزري</p>
+                            <div class="h-8 flex items-center justify-center font-serif text-amber-400/60 italic text-sm">M. AlAzri</div>
+                        </div>
+                        <div class="space-y-1">
+                            <p class="text-slate-400 text-[10px]">مدير المدرسة</p>
+                            <p class="font-bold text-slate-200">أ. سلطان الوائلي</p>
+                            <div class="h-8 flex items-center justify-center font-serif text-amber-400/60 italic text-sm">S. AlWaili</div>
+                        </div>
+                    </div>
+
+                    <!-- Seal Badge Footer -->
+                    <div class="text-[10px] text-slate-500 pt-2 flex items-center justify-between">
+                        <span>رمز التوثيق: <strong class="font-mono text-slate-400" id="cert-code">HTML-10-9842</strong></span>
+                        <span class="text-emerald-400 font-bold"><i class="fa-solid fa-shield-halved ml-1"></i> شهادة موثقة إلكترونياً</span>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 border-t border-slate-800/80 py-4 mt-8 text-center text-xs text-slate-500 no-print">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <p>© 2026 تم التطوير للذكاء الاصطناعي التفاعلي - مدرسة أبو الدرداء للصف العاشر</p>
+            <p>إعداد: <span class="text-slate-300 font-bold">أ. محمد الهنائي</span> | إشراف: <span class="text-slate-300 font-bold">أ. محمد العزري</span></p>
+        </div>
+    </footer>
+
+    <!-- AUDIO SYNTHESIS & APPLICATION JS SCRIPT -->
+    <script>
+        // State Management
+        let studentData = {
+            name: '',
+            classSection: '',
+            score: 0,
+            completedModules: new Set(),
+            audioMuted: false
+        };
+
+        // Web Audio API Sound Synthesizer
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function playSound(type) {
+            if (studentData.audioMuted) return;
+            try {
+                if (!audioCtx) audioCtx = new AudioCtx();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, now);
+                    osc.frequency.exponentialRampToValueAtTime(800, now + 0.05);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                    osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                } else if (type === 'error') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.setValueAtTime(180, now + 0.1);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'fanfare') {
+                    const notes = [440, 554.37, 659.25, 880];
+                    notes.forEach((freq, i) => {
+                        const noteOsc = audioCtx.createOscillator();
+                        const noteGain = audioCtx.createGain();
+                        noteOsc.connect(noteGain);
+                        noteGain.connect(audioCtx.destination);
+                        noteOsc.frequency.setValueAtTime(freq, now + i * 0.1);
+                        noteGain.gain.setValueAtTime(0.15, now + i * 0.1);
+                        noteGain.gain.linearRampToValueAtTime(0, now + i * 0.1 + 0.25);
+                        noteOsc.start(now + i * 0.1);
+                        noteOsc.stop(now + i * 0.1 + 0.25);
+                    });
+                }
+            } catch(e) {
+                console.log('Web Audio error:', e);
+            }
+        }
+
+        function toggleAudioMute() {
+            studentData.audioMuted = !studentData.audioMuted;
+            const btn = document.getElementById('sound-btn');
+            if (studentData.audioMuted) {
+                btn.innerHTML = '<i class="fa-solid fa-volume-xmark text-red-400"></i>';
+            } else {
+                btn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+                playSound('click');
+            }
+        }
+
+        // Onboarding Handler
+        function handleStartLearning(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('student-name-input').value.trim();
+            const classInput = document.getElementById('student-class-input').value;
+
+            if (!nameInput || !classInput) return;
+
+            studentData.name = nameInput;
+            studentData.classSection = classInput;
+
+            // Update UI elements
+            document.getElementById('header-student-name').innerText = studentData.name;
+            document.getElementById('header-student-class').innerText = studentData.classSection;
+            document.getElementById('cert-student-name').innerText = studentData.name;
+            document.getElementById('cert-student-class').innerText = studentData.classSection;
+            
+            // Random Cert Code
+            document.getElementById('cert-code').innerText = 'HTML10-' + Math.floor(1000 + Math.random() * 9000);
+
+            // Date
+            const today = new Date();
+            document.getElementById('cert-date').innerText = 'التاريخ: ' + today.toLocaleDateString('ar-OM');
+
+            // Hide Modal
+            document.getElementById('login-modal').classList.add('hidden');
+            playSound('fanfare');
+            addScore(10); // Welcome bonus
+
+            // Load Initial Editor Content
+            loadSampleCode('basic');
+        }
+
+        // Add Points
+        function addScore(points) {
+            studentData.score += points;
+            document.getElementById('total-score').innerText = studentData.score;
+            document.getElementById('cert-score').innerText = Math.min(100, Math.round((studentData.score / 150) * 100)) + '%';
+
+            // Progress Bar Update
+            const pct = Math.min(100, Math.round((studentData.score / 150) * 100));
+            document.getElementById('global-progress').style.width = pct + '%';
+        }
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            playSound('click');
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+
+            // Hide all sections
+            ['lesson', 'matching', 'builder', 'quiz', 'certificate'].forEach(id => {
+                document.getElementById(`section-${id}`).classList.add('hidden');
+            });
+
+            // Show active section
+            document.getElementById(`section-${tabId}`).classList.remove('hidden');
+
+            if (tabId === 'matching') initMatchingGame();
+            if (tabId === 'builder') initBuilderGame();
+            if (tabId === 'quiz') initQuizGame();
+            if (tabId === 'certificate') triggerConfetti();
+        }
+
+        // Topic Accordion Toggle
+        function toggleTopic(topicId) {
+            playSound('click');
+            const topicEl = document.getElementById(topicId);
+            const icon = document.getElementById(`${topicId}-icon`);
+            if (topicEl.classList.contains('hidden')) {
+                topicEl.classList.remove('hidden');
+                icon.className = 'fa-solid fa-chevron-up text-brand-400';
+            } else {
+                topicEl.classList.add('hidden');
+                icon.className = 'fa-solid fa-chevron-down text-slate-400';
+            }
+        }
+
+        // --- CODE SANDBOX ENGINE ---
+        const sampleCodes = {
+            basic: `<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <title>موقعي الأول</title>
+</head>
+<body style="font-family: sans-serif; text-align: center; padding: 20px; background-color: #f8fafc; color: #0f172a;">
+  <h1>مرحباً بكم في مدرسة أبو الدرداء</h1>
+  <p>هذا أول تطبيق عملي لدرس الوسوم الأساسية في لغة HTML للصف العاشر.</p>
+</body>
+</html>`,
+            structure: `<!DOCTYPE html>
+<html>
+<head>
+  <title>عنوان الصفحة يظهر هنا</title>
+</head>
+<body style="font-family: sans-serif; padding: 15px; color: #1e293b;">
+  <h2>محتوى الصفحة الظاهر للمستخدم</h2>
+  <p>جميع النصوص والوسائط تضاف داخل وسم body.</p>
+</body>
+</html>`,
+            headings: `<!DOCTYPE html>
+<html>
+<body style="font-family: sans-serif; padding: 15px; color: #0f172a;">
+  <h1 style="color: #0284c7;">عنوان رئيسي كبير h1</h1>
+  <h2 style="color: #0369a1;">عنوان فرعي h2</h2>
+  <h3 style="color: #334155;">عنوان فرعي أصغر h3</h3>
+  <hr>
+  <p>هذه فقرة نصية عادية تجسد وسم p.<br>تم النزول لسطر جديد هنا باستخدام وسم br مفرد.</p>
+</body>
+</html>`,
+            images: `<!DOCTYPE html>
+<html>
+<body style="font-family: sans-serif; text-align: center; padding: 15px;">
+  <h2>تطبيق إدراج صورة</h2>
+  <img src="https://placehold.co/400x200/0284c7/ffffff?text=HTML5+Image" 
+       alt="صورة تعليمية" 
+       width="350" 
+       style="border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+  <p style="color: #64748b; font-size: 13px;">تمت إضافة الصورة باستخدام وسم &lt;img&gt;</p>
+</body>
+</html>`,
+            media: `<!DOCTYPE html>
+<html>
+<body style="font-family: sans-serif; text-align: center; padding: 15px; color: #0f172a;">
+  <h3>وسم الصوت والفيديو</h3>
+  <p>1. مشغل صوتي:</p>
+  <audio controls style="margin-bottom: 15px;">
+    <source src="https://www.w3schools.com/html/horse.mp3" type="audio/mpeg">
+    متصفحك لا يدعم وسم الصوت.
+  </audio>
+
+  <p>2. مشغل فيديو:</p>
+  <video controls width="300" style="border-radius: 10px;">
+    <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+    متصفحك لا يدعم وسم الفيديو.
+  </video>
+</body>
+</html>`
+        };
+
+        function loadSampleCode(key) {
+            playSound('click');
+            const editor = document.getElementById('code-input');
+            editor.value = sampleCodes[key] || sampleCodes.basic;
+            runCode();
+        }
+
+        function runCode() {
+            playSound('click');
+            const code = document.getElementById('code-input').value;
+            const iframe = document.getElementById('code-preview');
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            iframeDoc.open();
+            iframeDoc.write(code);
+            iframeDoc.close();
+        }
+
+        function resetEditor() {
+            loadSampleCode('basic');
+        }
+
+        // Live typing updates sandbox preview
+        document.getElementById('code-input').addEventListener('input', () => {
+            runCode();
+        });
+
+        // --- GAME 1: TAG MATCHING GAME ---
+        const matchingPairs = [
+            { id: 1, tag: '<h1> - <h6>', desc: 'وسوم لكتابة العناوين الرئيسية والفرعية بدرجاتها' },
+            { id: 2, tag: '<p>', desc: 'وسم لكتابة الفقرات النصية العادية' },
+            { id: 3, tag: '<hr>', desc: 'وسم مفرد يرسم خطاً فاصلاً أفقياً بين المحتويات' },
+            { id: 4, tag: '<br>', desc: 'وسم مفرد يتيح الانتقال والنزول لسطر جديد' },
+            { id: 5, tag: '<img src="...">', desc: 'وسم إدراج الصور وتحديد مسارها وعرضها' },
+            { id: 6, tag: '<audio controls>', desc: 'وسم إدراج الملفات الصوتية مع لوحة التحكم' }
+        ];
+
+        let selectedTag = null;
+        let selectedDesc = null;
+        let matchedCount = 0;
+
+        function initMatchingGame() {
+            matchedCount = 0;
+            document.getElementById('match-score').innerText = '0';
+            selectedTag = null;
+            selectedDesc = null;
+
+            const tagsCol = document.getElementById('tags-column');
+            const descsCol = document.getElementById('descs-column');
+
+            tagsCol.innerHTML = '';
+            descsCol.innerHTML = '';
+
+            // Shuffle arrays
+            const shuffledTags = [...matchingPairs].sort(() => Math.random() - 0.5);
+            const shuffledDescs = [...matchingPairs].sort(() => Math.random() - 0.5);
+
+            shuffledTags.forEach(item => {
+                const btn = document.createElement('div');
+                btn.className = 'tag-btn p-3 bg-slate-900 border border-slate-700 hover:border-brand-500 rounded-xl text-center font-mono font-bold text-brand-300 text-sm cursor-pointer transition shadow';
+                btn.innerText = item.tag;
+                btn.dataset.id = item.id;
+                btn.onclick = () => selectTagBtn(btn, item.id);
+                tagsCol.appendChild(btn);
+            });
+
+            shuffledDescs.forEach(item => {
+                const btn = document.createElement('div');
+                btn.className = 'desc-btn p-3 bg-slate-900 border border-slate-700 hover:border-amber-500 rounded-xl text-right text-xs text-slate-300 cursor-pointer transition shadow leading-relaxed';
+                btn.innerText = item.desc;
+                btn.dataset.id = item.id;
+                btn.onclick = () => selectDescBtn(btn, item.id);
+                descsCol.appendChild(btn);
+            });
+        }
+
+        function selectTagBtn(el, id) {
+            playSound('click');
+            document.querySelectorAll('.tag-btn').forEach(b => {
+                if (!b.classList.contains('matched')) b.classList.remove('border-brand-400', 'bg-brand-500/20');
+            });
+            if (el.classList.contains('matched')) return;
+            selectedTag = { el, id };
+            el.classList.add('border-brand-400', 'bg-brand-500/20');
+            checkMatch();
+        }
+
+        function selectDescBtn(el, id) {
+            playSound('click');
+            document.querySelectorAll('.desc-btn').forEach(b => {
+                if (!b.classList.contains('matched')) b.classList.remove('border-amber-400', 'bg-amber-500/20');
+            });
+            if (el.classList.contains('matched')) return;
+            selectedDesc = { el, id };
+            el.classList.add('border-amber-400', 'bg-amber-500/20');
+            checkMatch();
+        }
+
+        function checkMatch() {
+            if (selectedTag && selectedDesc) {
+                if (selectedTag.id === selectedDesc.id) {
+                    // Correct Match
+                    playSound('correct');
+                    selectedTag.el.className = 'p-3 bg-emerald-950/80 border-2 border-emerald-500 text-emerald-300 rounded-xl text-center font-mono font-bold text-sm matched opacity-80 pointer-events-none';
+                    selectedDesc.el.className = 'p-3 bg-emerald-950/80 border-2 border-emerald-500 text-emerald-300 rounded-xl text-right text-xs matched opacity-80 pointer-events-none';
+                    
+                    matchedCount++;
+                    document.getElementById('match-score').innerText = matchedCount;
+                    addScore(15);
+
+                    selectedTag = null;
+                    selectedDesc = null;
+
+                    if (matchedCount === matchingPairs.length) {
+                        playSound('fanfare');
+                        triggerConfetti();
+                    }
+                } else {
+                    // Wrong Match
+                    playSound('error');
+                    selectedTag.el.classList.add('border-red-500', 'bg-red-500/20');
+                    selectedDesc.el.classList.add('border-red-500', 'bg-red-500/20');
+                    
+                    setTimeout(() => {
+                        if (selectedTag && selectedTag.el) selectedTag.el.classList.remove('border-red-500', 'bg-red-500/20', 'border-brand-400', 'bg-brand-500/20');
+                        if (selectedDesc && selectedDesc.el) selectedDesc.el.classList.remove('border-red-500', 'bg-red-500/20', 'border-amber-400', 'bg-amber-500/20');
+                        selectedTag = null;
+                        selectedDesc = null;
+                    }, 600);
+                }
+            }
+        }
+
+        // --- GAME 2: CODE BUILDER CHALLENGE ---
+        const builderTags = [
+            { id: 't1', code: '<h1>', targetSlot: 1 },
+            { id: 't2', code: '<hr>', targetSlot: 2 },
+            { id: 't3', code: '<p>', targetSlot: 3 },
+            { id: 't4', code: '</p>', targetSlot: 4 },
+            { id: 't5', code: '<img src="school.jpg">', targetSlot: 5 }
+        ];
+
+        let selectedPoolTag = null;
+        let slotState = { 1: null, 2: null, 3: null, 4: null, 5: null };
+
+        function initBuilderGame() {
+            slotState = { 1: null, 2: null, 3: null, 4: null, 5: null };
+            const pool = document.getElementById('tags-pool');
+            pool.innerHTML = '';
+
+            const shuffled = [...builderTags].sort(() => Math.random() - 0.5);
+
+            shuffled.forEach(item => {
+                const tagEl = document.createElement('div');
+                tagEl.className = 'pool-tag px-3 py-2 bg-brand-600/30 hover:bg-brand-500/40 border border-brand-500 rounded-lg text-brand-300 font-mono text-xs font-bold cursor-pointer transition select-none';
+                tagEl.innerText = item.code;
+                tagEl.dataset.id = item.id;
+                tagEl.onclick = () => selectPoolTag(tagEl, item);
+                pool.appendChild(tagEl);
+            });
+
+            // Reset slots UI
+            for (let i = 1; i <= 5; i++) {
+                const slot = document.getElementById(`slot-${i}`);
+                slot.innerText = '[ اسقط الوسم هنا ]';
+                slot.className = 'drop-slot w-36 sm:w-44 h-9 border-2 border-dashed border-brand-500/50 rounded-lg flex items-center justify-center text-xs font-bold text-brand-300 bg-brand-500/10 cursor-pointer hover:bg-brand-500/20 transition';
+            }
+        }
+
+        function selectPoolTag(el, item) {
+            playSound('click');
+            document.querySelectorAll('.pool-tag').forEach(t => t.classList.remove('ring-2', 'ring-amber-400'));
+            selectedPoolTag = { el, item };
+            el.classList.add('ring-2', 'ring-amber-400');
+        }
+
+        function handleSlotClick(slotNum) {
+            if (!selectedPoolTag) {
+                playSound('click');
+                return;
+            }
+
+            playSound('click');
+            slotState[slotNum] = selectedPoolTag.item;
+
+            const slotEl = document.getElementById(`slot-${slotNum}`);
+            slotEl.innerText = selectedPoolTag.item.code;
+            slotEl.className = 'drop-slot px-3 h-9 border-2 border-emerald-500 bg-emerald-500/20 rounded-lg flex items-center justify-center text-xs font-bold text-emerald-300 font-mono';
+
+            selectedPoolTag.el.style.opacity = '0.3';
+            selectedPoolTag.el.style.pointerEvents = 'none';
+            selectedPoolTag = null;
+        }
+
+        function resetBuilderGame() {
+            playSound('click');
+            initBuilderGame();
+        }
+
+        function verifyBuilderSolution() {
+            let correct = true;
+            for (let i = 1; i <= 5; i++) {
+                if (!slotState[i] || slotState[i].targetSlot !== i) {
+                    correct = false;
+                    break;
+                }
+            }
+
+            if (correct) {
+                playSound('fanfare');
+                triggerConfetti();
+                addScore(40);
+                alert('ممتاز أبطال الصف العاشر! لقد قمت ببناء كود الصفحة بنجاح 100%.');
+            } else {
+                playSound('error');
+                alert('هناك وسوم مفقودة أو موضوعة في غير مكانها الصحيح. حاول مرة أخرى!');
+            }
+        }
+
+        // --- GAME 3: BUG HUNTER QUIZ ---
+        const quizQuestions = [
+            {
+                q: 'ما هو الوسم الذي يحدد عنوان الصفحة الظاهر في تبويب المتصفح العلوي؟',
+                options: ['<title>', '<body>', '<h1>', '<head>'],
+                correct: 0,
+                hint: 'يوضع هذا الوسم دائماً داخل وسم <head>.'
+            },
+            {
+                q: 'أي من الوسوم التالية يعتبر الوسم الأكبر حجماً للعناوين الرئيسية؟',
+                options: ['<h6>', '<h3>', '<h1>', '<heading>'],
+                correct: 2,
+                hint: 'تترتب العناوين عكسياً حيث الرقم 1 يمثل العنوان الأكبر.'
+            },
+            {
+                q: 'نريد إضافة خط فاصل أفقي ينظم محتوى الصفحة، ما هو الوسم المناسب؟',
+                options: ['<br>', '<line>', '<hr>', '<border>'],
+                correct: 2,
+                hint: 'كلمة Horizontal Rule تشير لرمز هذا الوسم.'
+            },
+            {
+                q: 'ما هي الخاصية (Attribute) الضرورية في وسم <img> لتحديد رابط أو مسار الصورة؟',
+                options: ['href', 'src', 'link', 'alt'],
+                correct: 1,
+                hint: 'اختصار لكلمة Source.'
+            },
+            {
+                q: 'لتشغيل الصوت أو الفيديو وإظهار أزرار التشغيل والتوقف للمستخدم، نضيف الخاصية:',
+                options: ['autoplay', 'controls', 'play', 'show'],
+                correct: 1,
+                hint: 'خاصية تتيح لوحة التحكم للمستخدم.'
+            },
+            {
+                q: 'ما هو الوسم المفرد الذي يستخدم للنزول لسطر جديد دون إنشاء فقرة جديدة؟',
+                options: ['<p>', '<br>', '<hr>', '<next>'],
+                correct: 1,
+                hint: 'اختصار لكلمة Break.'
+            }
+        ];
+
+        let currentQuizIndex = 0;
+        let userQuizAnswers = {};
+
+        function initQuizGame() {
+            currentQuizIndex = 0;
+            userQuizAnswers = {};
+            document.getElementById('quiz-total-steps').innerText = quizQuestions.length;
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = quizQuestions[currentQuizIndex];
+            document.getElementById('quiz-current-step').innerText = currentQuizIndex + 1;
+
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <h3 class="text-lg font-bold text-white font-tajawal leading-relaxed">${q.q}</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                        ${q.options.map((opt, idx) => `
+                            <button onclick="selectQuizOption(${idx})" class="quiz-opt-btn p-3.5 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 rounded-xl text-right text-xs sm:text-sm font-semibold text-slate-200 transition flex items-center gap-3 ${userQuizAnswers[currentQuizIndex] === idx ? 'ring-2 ring-brand-500 bg-brand-500/10' : ''}">
+                                <span class="w-6 h-6 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-brand-400">${['أ', 'ب', 'ج', 'د'][idx]}</span>
+                                <span>${opt}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            // Button visibility
+            document.getElementById('quiz-prev-btn').disabled = currentQuizIndex === 0;
+            const nextBtn = document.getElementById('quiz-next-btn');
+            if (currentQuizIndex === quizQuestions.length - 1) {
+                nextBtn.innerHTML = 'عرض النتيجة النهائية <i class="fa-solid fa-flag-checkered mr-1"></i>';
+                nextBtn.className = 'px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition shadow-md';
+            } else {
+                nextBtn.innerHTML = 'السؤال التالي <i class="fa-solid fa-arrow-left mr-1"></i>';
+                nextBtn.className = 'px-6 py-2.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold transition shadow-md';
+            }
+        }
+
+        function selectQuizOption(optIndex) {
+            playSound('click');
+            userQuizAnswers[currentQuizIndex] = optIndex;
+            renderQuestion();
+        }
+
+        function nextQuestion() {
+            playSound('click');
+            if (userQuizAnswers[currentQuizIndex] === undefined) {
+                alert('يرجى اختيار إجابة قبل الانتقال للسؤال التالي!');
+                return;
+            }
+
+            if (currentQuizIndex < quizQuestions.length - 1) {
+                currentQuizIndex++;
+                renderQuestion();
+            } else {
+                // Finish Quiz
+                calculateQuizScore();
+            }
+        }
+
+        function prevQuestion() {
+            playSound('click');
+            if (currentQuizIndex > 0) {
+                currentQuizIndex--;
+                renderQuestion();
+            }
+        }
+
+        function calculateQuizScore() {
+            let correctNum = 0;
+            quizQuestions.forEach((q, idx) => {
+                if (userQuizAnswers[idx] === q.correct) correctNum++;
+            });
+
+            const pointsEarned = correctNum * 10;
+            addScore(pointsEarned);
+
+            playSound('fanfare');
+            triggerConfetti();
+
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = `
+                <div class="text-center py-6 space-y-4">
+                    <div class="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border-2 border-emerald-500 flex items-center justify-center mx-auto text-2xl font-black">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <h3 class="text-2xl font-black text-white font-tajawal">أحسنت بطل الصف العاشر!</h3>
+                    <p class="text-sm text-slate-300">لقد أجبت على <strong class="text-emerald-400 font-bold">${correctNum}</strong> من أصل <strong class="text-white">${quizQuestions.length}</strong> أسئلة بشكل صحيح.</p>
+                    <p class="text-xs text-amber-400">تمت إضافة +${pointsEarned} نقطة إلى مجموع إنجازاتك.</p>
+                    <button onclick="switchTab('certificate')" class="mt-4 px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold rounded-xl text-xs shadow-lg transition transform hover:-translate-y-0.5">
+                        الانتقال لاستلام شهادة التقدير <i class="fa-solid fa-award mr-1"></i>
+                    </button>
+                </div>
+            `;
+        }
+
+        // --- CELEBRATION CONFETTI ENGINE ---
+        function triggerConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#0284c7', '#f59e0b', '#10b981', '#ec4899', '#8b5cf6'];
+
+            for (let i = 0; i < 80; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    size: Math.random() * 8 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    speedY: Math.random() * 3 + 2,
+                    speedX: Math.random() * 2 - 1,
+                    rotation: Math.random() * 360
+                });
+            }
+
+            let animationFrame;
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.y += p.speedY;
+                    p.x += p.speedX;
+                    p.rotation += 2;
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.rotation * Math.PI) / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                    ctx.restore();
+                });
+
+                if (particles.some(p => p.y < canvas.height)) {
+                    animationFrame = requestAnimationFrame(animate);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    cancelAnimationFrame(animationFrame);
+                }
+            }
+            animate();
+        }
+
+        // Initialize App
+        window.onload = function() {
+            runCode();
+        };
+    </script>
+</body>
+</html>
